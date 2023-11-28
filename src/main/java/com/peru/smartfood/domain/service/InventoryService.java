@@ -23,4 +23,8 @@ public interface InventoryService {
 
     List<Inventory> getAllInventories();
 
+    Inventory getLatestInventory();
+
+
+
 }

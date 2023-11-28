@@ -23,10 +23,14 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+<!--posgres CAMBIAR PARA DFESPLEGAR-->
+
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>9.4.0.jre11</version>
 		</dependency>
+		<!--posgres-->
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

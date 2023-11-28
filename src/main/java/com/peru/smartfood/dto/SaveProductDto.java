@@ -1,5 +1,7 @@
 package com.peru.smartfood.dto;
 
+import com.peru.smartfood.domain.model.Category;
+import com.peru.smartfood.domain.model.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 

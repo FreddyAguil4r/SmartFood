@@ -18,7 +18,6 @@ public class SupplierServiceImp implements SupplierService {
 
     @Override
     public Supplier createSupplier(Supplier supplier) {
-
         return supplierRepository.save(supplier);
     }
 

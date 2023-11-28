@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.util.Date;
 import java.util.List;
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -47,6 +48,15 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryRepository.findAll();
 
 
+    }
+    @Override
+    public Inventory getLatestInventory() {
+        List<Inventory> inventories = inventoryRepository.findAll();
+        if (!inventories.isEmpty()) {
+            // Devuelve el último inventario registrado (asumiendo que están ordenados por ID)
+            return inventories.get(inventories.size() - 1);
+        }
+        return null;
     }
 }
 

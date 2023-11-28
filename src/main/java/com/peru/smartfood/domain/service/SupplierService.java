@@ -24,4 +24,6 @@ public interface SupplierService {
 
     List<Supplier> getAllSuppliers();
 
+
+
 }

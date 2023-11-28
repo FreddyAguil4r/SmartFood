@@ -1,10 +1,16 @@
 package com.peru.smartfood.controller;
 
 
+import com.peru.smartfood.domain.model.Category;
 import com.peru.smartfood.domain.model.Product;
+import com.peru.smartfood.domain.model.Supplier;
+import com.peru.smartfood.domain.service.CategoryService;
 import com.peru.smartfood.domain.service.ProductService;
+import com.peru.smartfood.domain.service.SupplierService;
 import com.peru.smartfood.dto.ProductDto;
 import com.peru.smartfood.dto.SaveProductDto;
+
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,9 +26,14 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class ProductController {
 
-
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private SupplierService supplierService;
 
     @Autowired
     private final ModelMapper mapper;
@@ -55,12 +66,27 @@ public class ProductController {
     }
 
 
-    private Product convertToEntity(SaveProductDto resource) {
-        return mapper.map(resource, Product.class);
+    private Product convertToEntity(SaveProductDto dto) {
+        Product product = new Product();
+
+        product.setName(dto.getName());
+        product.setDueDate(dto.getDueDate());
+        product.setUnitCost(dto.getUnitCost());
+        product.setAmount(dto.getAmount());
+
+        Category category = categoryService.getCategoryById(dto.getCategoryId());
+        product.setCategory(category);
+
+        Supplier supplier = supplierService.getSupplierById(dto.getSupplierId());
+        product.setSupplier(supplier);
+
+        return product;
     }
+
     private ProductDto convertToResource(Product entity)
     {
         return mapper.map(entity, ProductDto.class);
     }
+
     
 }

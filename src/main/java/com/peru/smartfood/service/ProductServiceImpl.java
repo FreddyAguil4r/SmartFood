@@ -28,22 +28,74 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        product.setDatePurchase(new Date());
-        Product savedProduct = productRepository.save(product);
 
-        // Actualizar totalValuesCategories en la categoría
-        Category category = savedProduct.getCategory();
+        //no se puede registrar un producto si no hay el category
+        //validar que el category exista
+        //si no existe, lanzar throw
+        //si existe, crear el producto
+        //si existe, actualizar el valor total de la categoría
+        //si existe, actualizar el valor total del inventario
+        //si existe, guardar el producto
+        //si existe, retornar el producto
+        //si no existe, lanzar throw
+        Category category = categoryService.getCategoryById(product.getCategory().getId());
+        if (category == null) {
+            throw new NoSuchElementException("Category not found with ID: " + product.getCategory().getId());
+        }
+
+        // Actualizar el valor de la categoría
+        float currentTotal = category.getTotalValuesCategories();
+        float VALOR_A_SUMAR= product.getAmount()*product.getUnitCost();
+
+        category.setTotalValuesCategories(currentTotal + VALOR_A_SUMAR);
+        categoryService.updateCategory(category.getId(), category);
+
+        // Actualizar el valor del inventario
+        Inventory inventory = inventoryService.getLatestInventory();
+        if (inventory == null) {
+            // Si no hay inventarios registrados, crear uno nuevo
+            inventory = new Inventory();
+            inventory.setCurrentSystem(new Date());
+            inventory.setTotalInventory(product.getAmount());
+            inventoryService.createInventory(inventory);
+        } else {
+            inventory.setTotalInventory(inventory.getTotalInventory() + VALOR_A_SUMAR);
+            inventoryService.updateInventory(inventory.getId(), inventory);
+        }
+
+        product.setCategory(category);
+        return productRepository.save(product);
+
+    }
+
+    @Override
+    public ResponseEntity<?> deleteProduct(Integer productId) {
+
+        Product productToDelete = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        float VALOR_A_RESTAR= productToDelete.getAmount()*productToDelete.getUnitCost();
+
+        // Restar el valor del producto de la categoría
+        Category category = productToDelete.getCategory();
         if (category != null) {
             float currentTotal = category.getTotalValuesCategories();
-            category.setTotalValuesCategories(currentTotal + savedProduct.getAmount());
+            category.setTotalValuesCategories(currentTotal - VALOR_A_RESTAR);
             categoryService.updateCategory(category.getId(), category);
         }
 
-        // Actualizar Inventory
-        Inventory updatedInventory = inventoryService.updateInventory(savedProduct.getCategory().getInventory().getId(), savedProduct.getCategory().getInventory());
+        // registrar un nuevo inventory con el nuevo valor, no se actualiza, sino se registra uno nuevo
+        Inventory inventory = inventoryService.getLatestInventory();
+        if (inventory != null) {
+            Inventory newInventory = new Inventory();
+            newInventory.setCurrentSystem(new Date());
+            newInventory.setTotalInventory(inventory.getTotalInventory() - VALOR_A_RESTAR);
+            inventoryService.createInventory(newInventory);
+        }
 
-        return savedProduct;
+        productRepository.delete(productToDelete);
 
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -51,6 +103,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("Product not found with ID: " + productId));
     }
+
     @Override
     public Product updateProduct(Integer productId, Product productRequest) {
         Product product = productRepository.findById(productId)
@@ -64,27 +117,6 @@ public class ProductServiceImpl implements ProductService {
         product.setWarehouseValue(productRequest.getWarehouseValue());
 
         return productRepository.save(product);
-    }
-
-    @Override
-    public ResponseEntity<?> deleteProduct(Integer productId) {
-        Product productToDelete = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
-        // Restar el valor del producto de la categoría
-        Category category = productToDelete.getCategory();
-        if (category != null) {
-            float currentTotal = category.getTotalValuesCategories();
-            category.setTotalValuesCategories(currentTotal - productToDelete.getAmount());
-            categoryService.updateCategory(category.getId(), category);
-        }
-
-        // Actualizar Inventory
-        inventoryService.updateInventory(productToDelete.getCategory().getInventory().getId(), productToDelete.getCategory().getInventory());
-
-        productRepository.delete(productToDelete);
-
-        return ResponseEntity.ok().build();
     }
 
     @Override
