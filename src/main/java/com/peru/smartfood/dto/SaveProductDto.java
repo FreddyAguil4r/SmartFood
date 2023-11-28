@@ -21,8 +21,6 @@ public class SaveProductDto {
 
     private float amount;
 
-    private float warehouseValue;
-
     private int categoryId;
 
     private int supplierId;

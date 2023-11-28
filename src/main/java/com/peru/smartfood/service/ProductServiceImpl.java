@@ -51,6 +51,7 @@ public class ProductServiceImpl implements ProductService {
         float currentTotal = category.getTotalValuesCategories();
         float VALOR_A_SUMAR= product.getAmount()*product.getUnitCost();
 
+        product.setWarehouseValue(VALOR_A_SUMAR);
         category.setTotalValuesCategories(currentTotal + VALOR_A_SUMAR);
         categoryService.updateCategory(category.getId(), category);
 
