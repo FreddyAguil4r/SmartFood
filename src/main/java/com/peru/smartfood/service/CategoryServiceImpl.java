@@ -2,10 +2,12 @@ package com.peru.smartfood.service;
 
 import com.peru.smartfood.domain.model.Category;
 import com.peru.smartfood.domain.model.Inventory;
+import com.peru.smartfood.domain.model.Product;
 import com.peru.smartfood.domain.repository.CategoryRepository;
 import com.peru.smartfood.domain.service.CategoryService;
 import com.peru.smartfood.domain.service.InventoryService;
 import com.peru.smartfood.domain.service.ProductService;
+import com.peru.smartfood.dto.CategoriesAndProductsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -77,5 +79,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll();
 
     }
+
 }
 

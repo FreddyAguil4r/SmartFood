@@ -1,6 +1,8 @@
 package com.peru.smartfood.domain.service;
 
+import com.peru.smartfood.domain.model.Category;
 import com.peru.smartfood.domain.model.Product;
+import com.peru.smartfood.dto.CategoriesAndProductsDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,13 @@ public interface ProductService {
     ResponseEntity<?> deleteProduct(Integer productId);
 
     List<Product> getAllProducts();
+
+
+    //getAllProductsByCategory
+    List<Product> getAllProductsByCategory(Integer categoryId);
+
+    //getAllCategoriesWithProducts
+    List<CategoriesAndProductsDto> getAllCategoriesWithProducts();
 
 
 }

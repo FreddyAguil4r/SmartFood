@@ -6,13 +6,17 @@ import com.peru.smartfood.domain.model.Product;
 import com.peru.smartfood.domain.repository.ProductRepository;
 import com.peru.smartfood.domain.service.*;
 import javax.persistence.EntityNotFoundException;
+
+import com.peru.smartfood.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -62,8 +66,8 @@ public class ProductServiceImpl implements ProductService {
             inventory.setTotalInventory(inventory.getTotalInventory() + VALOR_A_SUMAR);
             inventoryService.updateInventory(inventory.getId(), inventory);
         }
-
         product.setCategory(category);
+        product.setDatePurchase(new Date());
         return productRepository.save(product);
 
     }
@@ -123,5 +127,43 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+    @Override
+    public List<Product> getAllProductsByCategory(Integer categoryId) {
+
+        Category category = categoryService.getCategoryById(categoryId);
+        if (category == null) {
+            throw new NoSuchElementException("Category not found with ID: " + categoryId);
+        }
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<CategoriesAndProductsDto> getAllCategoriesWithProducts() {
+        List<Category> categories = categoryService.getAllCategories();
+        return categories.stream()
+                .map(category -> {
+                    CategoriesAndProductsDto categoriesAndProductsDto = new CategoriesAndProductsDto();
+                    categoriesAndProductsDto.setName(category.getName());
+                    categoriesAndProductsDto.setTotalValuesCategories(category.getTotalValuesCategories());
+                    categoriesAndProductsDto.setProducts(
+                            productRepository.findByCategoryId(category.getId())
+                                    .stream()
+                                    .map(product -> {
+                                        ShortProductDto shortProductDto = new ShortProductDto();
+                                        shortProductDto.setName(product.getName());
+                                        shortProductDto.setAmount(product.getAmount());
+                                        shortProductDto.setUnitCost(product.getUnitCost());
+                                        shortProductDto.setDatePurchase(product.getDatePurchase());
+                                        shortProductDto.setDueDate(product.getDueDate());
+                                        return shortProductDto;
+                                    })
+                                    .collect(Collectors.toList())
+                    );
+                    return categoriesAndProductsDto;
+                })
+                .collect(Collectors.toList());
+    }
+
 }
 
