@@ -15,6 +15,7 @@ import pe.edu.upc.spring.domain.service.ProductService;
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -50,15 +51,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Integer productId) {
-
-        return productRepository.findById(productId).orElseThrow();
-
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Product not found with ID: " + productId));
     }
-
     @Override
     public Product updateProduct(Integer productId, Product productRequest) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Product not found with ID: " + productId));
 
-        Product product = productRepository.findById(productId).orElseThrow();
         product.setName(productRequest.getName());
         product.setDatePurchase(productRequest.getDatePurchase());
         product.setDueDate(productRequest.getDueDate());
@@ -67,7 +67,6 @@ public class ProductServiceImpl implements ProductService {
         product.setWarehouseValue(productRequest.getWarehouseValue());
 
         return productRepository.save(product);
-
     }
 
     @Override

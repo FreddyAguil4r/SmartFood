@@ -11,6 +11,7 @@ import pe.edu.upc.spring.domain.service.CategoryService;
 import pe.edu.upc.spring.domain.service.InventoryService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -37,24 +38,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(Integer categoryId) {
-        return categoryRepository.findById(categoryId).orElseThrow();
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException("Category not found with ID: " + categoryId));
     }
 
     @Override
     public Category updateCategory(Integer categoryId, Category categoryRequest) {
-
         return categoryRepository.findById(categoryId).map(category -> {
             category.setName(categoryRequest.getName());
             category.setTotalValuesCategories(categoryRequest.getTotalValuesCategories());
             return categoryRepository.save(category);
-        }).orElseThrow();
-
+        }).orElseThrow(() -> new NoSuchElementException("Category not found with ID: " + categoryId));
     }
-
     @Override
     public ResponseEntity<?> deleteCategory(Integer categoryId) {
-
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException("Category not found with ID: " + categoryId));
 
         categoryRepository.delete(category);
         return ResponseEntity.ok().build();

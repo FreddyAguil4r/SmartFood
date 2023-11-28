@@ -9,6 +9,7 @@ import pe.edu.upc.spring.domain.repository.SupplierRepository;
 import pe.edu.upc.spring.domain.service.SupplierService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class SupplierServiceImp implements SupplierService {
@@ -24,29 +25,28 @@ public class SupplierServiceImp implements SupplierService {
 
     @Override
     public Supplier getSupplierById(Integer supplierId) {
-        return supplierRepository.findById(supplierId).orElseThrow();
+        return supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new NoSuchElementException("Supplier not found with ID: " + supplierId));
     }
 
     @Override
     public Supplier updateSupplier(Integer supplierId, Supplier supplierRequest) {
-
         return supplierRepository.findById(supplierId).map(supplier -> {
             supplier.setName(supplierRequest.getName());
             supplier.setRuc(supplierRequest.getRuc());
             supplier.setAddress(supplierRequest.getAddress());
             return supplierRepository.save(supplier);
-        }).orElseThrow();
-
+        }).orElseThrow(() -> new NoSuchElementException("Supplier not found with ID: " + supplierId));
     }
 
     @Override
     public ResponseEntity<?> deleteSupplier(Integer supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new NoSuchElementException("Supplier not found with ID: " + supplierId));
 
-        Supplier supplier = supplierRepository.findById(supplierId).orElseThrow();
         supplierRepository.delete(supplier);
         return ResponseEntity.ok().build();
     }
-
     @Override
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
