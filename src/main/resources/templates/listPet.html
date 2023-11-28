@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	
+		<meta charset="UTF-8"></meta>
+		<title>Mascotas</title>
+		
+		<script type="text/javascript"
+				src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js">
+		</script>
+		
+		<link
+			href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+			rel="stylesheet" id="bootstrap-css">
+		</link>
+		
+		<script
+			src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js">
+		</script>
+		
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		
+	</head>
+
+	<body>
+    	<div th:replace="fragments/header :: header"></div>
+    	<div class="container">
+    		<form id="myform">
+    			<div class="row clearfix">
+    				<div class="col-md-12 column">
+    					
+    					<a 	style="border-bottom-color: green" th:href="@{/pet/irRegistrar}"
+    						id="add-row" type="button" class="btn btn-primary btn-md left-block">
+    						<span class="glyphicon glyphicon-plus"></span> Mascota
+    					</a>
+    					
+						<a 	style="border-bottom-color: green" th:href="@{/pet/irBuscar}"
+    						id="add-row" type="button" class="btn btn-primary btn-md left-block">
+    						<span class="glyphicon glyphicon-search"></span> Buscar
+    					</a>
+    					
+    					<table class="table table-bordered table-hover table-striped" id="tab_logic">
+    						<thead>
+    							<tr>
+    								<th class="text-center">CODIGO</th>
+    								<th class="text-center">MASCOTA</th>
+    								<th class="text-center">FEC.NAC</th>
+    								<th class="text-center">RAZA</th>
+    								<th class="text-center">PROPIETARIO</th>
+    								<th class="text-center">OPERACION</th>
+    								<th class="text-center">OPERACION</th>
+    							</tr>
+    						</thead>
+    						<tbody>
+    							<tr th:each="pet: ${listaMascotas}">
+    								<td th:text="${pet.idPet}"></td>
+    								<td th:text="${pet.namePet}"></td>
+    								<td th:text="${#dates.format(pet.birthDatePet, 'dd/MM/yyyy')}"></td>
+    								<td th:text="${pet.race.nameRace}"></td>
+    								<td th:text="${pet.dueno.nameDueno}"></td>
+    								<td><a th:href="@{/pet/eliminar?id=}+${pet.idPet}">Eliminar</a></td>    								
+    								<td><a th:href="@{'/pet/modificar/'}+${pet.idPet}">Modificar</a></td>
+    							</tr>
+    						</tbody>
+    					</table> 
+    					
+    				</div>
+    			</div>
+    			<div th:if="${mensaje}" class="alert alert-danger">
+    				<p th:text="${mensaje}"></p>
+    			</div>
+    		</form>
+    	</div>
+    	<div th:replace="fragments/footer :: footer"></div>
+	</body>
+
+</html>

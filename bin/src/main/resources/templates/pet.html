@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	
+		<meta charset="ISO-8859-1"></meta>
+		<title>Mascota</title>
+		
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		
+		<link 	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+				rel="stylesheet" id="bootstrap-css">
+		</link>
+
+		<script
+			src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js">
+		</script>
+		
+		<script type="text/javascript" th:src="@{/js/race.js}"></script>
+				
+	</head>
+
+	<body>
+    	<div th:replace="fragments/header :: header"></div>
+    	<div class="container">
+    		<form th:action="@{/pet/registrar}" method="post" th:object="${pet}">
+    			<div class="form-group">
+    				<label for="idpet">ID:</label>
+    				<input type="text" class="form-control" th:field="*{idPet}"></input>
+    				
+    				<div class="form-group">
+    					<label for="nombre">NOMBRE:</label>
+    					<input type="text" class="form-control" th:field="*{namePet}" id="nombre"></input>
+
+						<div 	class="alert alert-danger" th:if="${#fields.hasErrors('namePet')}" 
+								th:errors="*{namePet}">
+						</div>    					
+    				</div>
+    				<div class="form-group">
+    					<label for="nombre">FECHA NACIMIENTO:</label>
+    					<input type="date" class="form-control" th:field="*{birthDatePet}" id="fechaNacimiento"></input>
+
+						<div 	class="alert alert-danger" th:if="${#fields.hasErrors('birthDatePet')}" 
+								th:errors="*{birthDatePet}">
+						</div>    					
+    				</div>    
+    								
+    				<div class="form-group">
+    					<label for="nombre">RAZA</label>
+    					<select class="form-control" th:field="*{race.idRace}">
+    						<option th:each="r: ${listaRazas}"
+    							th:value="${r.idRace}"
+    							th:text="${r.nameRace}"
+    							th:selected="(${r.idRace} == *{race.idRace})">
+    						</option>    					
+    					</select>
+    				</div>    
+
+    				<div class="form-group">
+    					<label for="dueno">PROPIETARIO</label>
+    					<select class="form-control" th:field="*{dueno.idPropietario}">
+    						<option th:each="d: ${listaDuenos}"
+    							th:value="${d.idPropietario}"
+    							th:text="${d.nameDueno}"
+    							th:selected="(${d.idPropietario} == *{dueno.idPropietario})">
+    						</option>    					
+    					</select>
+    				</div>    
+   				
+    			</div>
+    			<button type="submit" class="btn btn-primary">Aceptar</button>
+    			<a href="/pet/listar" class="btn btn-danger">Cancelar</a>
+    		</form>
+    	</div>
+    	<div th:replace="fragments/footer :: footer"></div>
+	</body>
+
+</html>
