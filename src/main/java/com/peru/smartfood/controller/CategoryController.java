@@ -41,19 +41,15 @@ public class CategoryController {
         return categoryService.updateCategory(categoryId, categoryRequest);
     }
 
-
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer categoryId) {
         return categoryService.deleteCategory(categoryId);
     }
 
-
     @GetMapping("/all")
     public Iterable<Category> getAllCategories() {
         return categoryService.getAllCategories();
     }
-
-
 
     private Category convertToEntity(SaveCategoryDto resource) {
         return mapper.map(resource, Category.class);
